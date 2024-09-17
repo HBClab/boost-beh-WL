@@ -12,6 +12,11 @@ import subprocess
 
 def get_met():
 
+    proxies = {
+    'http': 'http://proxy.divms.uiowa.edu:8888',
+    'https': 'https://proxy.divms.uiowa.edu:8888',
+    }
+
 
     url = 'https://jatos.psychology.uiowa.edu/jatos/api/v1/results/metadata'
     headers = {
@@ -23,7 +28,7 @@ def get_met():
         'studyIds': [958, 973, 996, 911, 928, 945]
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, proxies=proxies)
 
     # If you want to print the response
     print(response.status_code)
@@ -56,6 +61,12 @@ def get_met():
     return study_result_ids
 
 def get_data(study_result_ids):
+
+    proxies = {
+    'http': 'http://proxy.divms.uiowa.edu:8888',
+    'https': 'https://proxy.divms.uiowa.edu:8888',
+    }
+
     headers = {
         'accept': 'application/octet-stream',
         'Authorization': 'Bearer jap_5ThOJ14yf7z1EPEUpAoZYMWoETZcmJk305719',
@@ -68,7 +79,7 @@ def get_data(study_result_ids):
     }
 
     url = 'https://jatos.psychology.uiowa.edu/jatos/api/v1/results/data'
-    response = requests.post(url, headers=headers, json=datas)
+    response = requests.post(url, headers=headers, json=datas, proxies=proxies)
     # Debugging information
     print(f"Status Code: {response.status_code}")
 
