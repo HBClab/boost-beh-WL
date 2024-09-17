@@ -11,11 +11,13 @@ import subprocess
 # jap_5ThOJ14yf7z1EPEUpAoZYMWoETZcmJk305719
 
 def get_met():
+    tease = os.envron['TEASE']
 
     proxies = {
-    'http': 'http://proxy.divms.uiowa.edu:8888',
-    'https': 'https://proxy.divms.uiowa.edu:8888',
+    'http': f'http:zjgilliam:{tease}//proxy.divms.uiowa.edu:8888',
+    'https': f'https://zjgilliam:{tease}proxy.divms.uiowa.edu:8888',
     }
+
 
 
     url = 'https://jatos.psychology.uiowa.edu/jatos/api/v1/results/metadata'
@@ -62,10 +64,13 @@ def get_met():
 
 def get_data(study_result_ids):
 
+    tease = os.envron['TEASE']
+
     proxies = {
-    'http': 'http://proxy.divms.uiowa.edu:8888',
-    'https': 'https://proxy.divms.uiowa.edu:8888',
+    'http': f'http:zjgilliam:{tease}//proxy.divms.uiowa.edu:8888',
+    'https': f'https://zjgilliam:{tease}proxy.divms.uiowa.edu:8888',
     }
+
 
     headers = {
         'accept': 'application/octet-stream',
