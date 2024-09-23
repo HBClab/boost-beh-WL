@@ -10,12 +10,22 @@ import subprocess
 
 # jap_5ThOJ14yf7z1EPEUpAoZYMWoETZcmJk305719
 
-def get_met():
-    tease = os.getenv['TEASE']
+def parse_cmd():
+    #parse command line for TEASE var
+    import argparse
+    parser = argparse.ArgumentParser(description='API File to Pull Subject Data from Jatos')
+    parser.add_argument('-t', type=str, help='TEASE')
+    parser.add_argument('-a', type=str, help="toke")
+    return parser.parse_args()
+
+
+
+def get_met(tease):
+    
 
     proxies = {
-    'http': f'http:zjgilliam:{tease}//proxy.divms.uiowa.edu:8888',
-    'https': f'https://zjgilliam:{tease}proxy.divms.uiowa.edu:8888',
+    'http': f'http:zjgilliam:{tease}@proxy.divms.uiowa.edu:8888',
+    'https': f'http://zjgilliam:{tease}@proxy.divms.uiowa.edu:8888',
     }
 
 
@@ -62,13 +72,14 @@ def get_met():
     
     return study_result_ids
 
-def get_data(study_result_ids):
+def get_data(study_result_ids, tease):
 
-    tease = os.getenv['TEASE']
+
+    
 
     proxies = {
-    'http': f'http:zjgilliam:{tease}//proxy.divms.uiowa.edu:8888',
-    'https': f'https://zjgilliam:{tease}proxy.divms.uiowa.edu:8888',
+    'http': f'http:zjgilliam:{tease}@proxy.divms.uiowa.edu:8888',
+    'https': f'http://zjgilliam:{tease}@proxy.divms.uiowa.edu:8888',
     }
 
 
@@ -184,7 +195,6 @@ def convert_beh():
 
     return paths
 
-
 def move_txt(txt_files):
     dic = {}
     for file_path in txt_files:
@@ -200,34 +210,42 @@ def move_txt(txt_files):
             print(sub)
             target_dir = f'./data/{sub}/raw'
             os.makedirs(target_dir, exist_ok=True)
-            # Save the DataFrame to a CSV file in the target directory
+            # Save the DataFrame to a text file in the target directory
             output_file = os.path.join(target_dir, os.path.basename(file_path))
-            # save df as a txt file to target dir
             with open(output_file, 'w') as f:
                 f.write(df.to_string(index=False))
             print(f"Saved {output_file} to {target_dir}")
         os.remove(file_path)
         print(f"Removed {file_path}")
-        # remove any dirs in data/raw
-        for root, dirs, files in os.walk('./data/raw'):
-            for d in dirs:
-                shutil.rmtree(os.path.join(root, d))
+
+    # Move the directory removal outside the loop
+    for root, dirs, files in os.walk('./data/raw'):
+        for d in dirs:
+            shutil.rmtree(os.path.join(root, d))
+    # Optionally, remove the raw directory itself
+    os.rmdir('./data/raw')
 
     return None
 
 
 
+def push(toke):
+    #use the folder name as task
+    task = os.path.basename(os.getcwd())
 
-def push():
-    subprocess.run(["git","remote", "set-url", "https://github.com/HBClab/boost-beh-AF.git"])
-    subprocess.run(["git", "add", "-A"])
-    subprocess.run(["git", "commit", "-m", "auto commit -> added subject task data"])
-    subprocess.run(["git", "push"])
-
+    subprocess.run(['git', 'config', 'user.email', 'miloswrath@users.noreply.github.com'])
+    subprocess.run(['git', 'remote', 'set-url', 'origin', f'https://miloswrath:{toke}@github.com/HBClab/{task}'])
+    subprocess.run(['git', 'config', 'user.name', 'miloswrath'])
+    subprocess.run(['git', 'add', '.'])
+    subprocess.run(['git', 'commit', '-m', 'Automated Commit -> New Data'])
+    subprocess.run(['git', 'push', 'origin', 'main'])
 
 def main():
-    study_result_ids = get_met()
-    get_data(study_result_ids)
+    args = parse_cmd()
+    tease = args.t
+    toke = args.a
+    study_result_ids = get_met(tease)
+    get_data(study_result_ids, tease)
     convert_beh()
     txt_files = []
     for root, dirs, files in os.walk('./data/raw'):
@@ -235,8 +253,7 @@ def main():
             if file.endswith(".txt"):
                 txt_files.append(os.path.join(root, file))
     move_txt(txt_files)
-    push()
-
+    push(toke)
 
 
 
