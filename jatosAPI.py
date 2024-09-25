@@ -37,7 +37,7 @@ def get_met(tease):
         'Content-Type': 'application/json',
     }
     data = {
-        'studyIds': [958, 973, 996, 911, 928, 945]
+        'studyIds': [958, 972, 995, 910, 927, 944]
     }
 
     response = requests.post(url, headers=headers, json=data, proxies=proxies)
@@ -61,7 +61,7 @@ def get_met(tease):
         for study_result in study['studyResults']:
             if study_result['studyState'] == 'FINISHED' and study_result['endDate'] >= one_day_ago:
                 study_result_ids.append(study_result['id'])
-                break  # No need to check other component results for this study result
+                #break  # No need to check other component results for this study result
 
     # Print the list of study result IDs
     print(study_result_ids)
@@ -90,12 +90,13 @@ def get_data(study_result_ids, tease):
     }
     # Get the data for each study result
     datas = {
-        'studyIds': [958, 973, 996, 911, 928, 945],
+        'studyIds': [958, 972, 995, 910, 927, 944],
         'studyResultIds': study_result_ids
     }
 
     url = 'https://jatos.psychology.uiowa.edu/jatos/api/v1/results/data'
-    response = requests.post(url, headers=headers, json=datas, proxies=proxies)
+    response = requests.post(url, headers=headers, json=datas, #proxies=proxies
+                             )
     # Debugging information
     print(f"Status Code: {response.status_code}")
 
@@ -253,7 +254,7 @@ def main():
             if file.endswith(".txt"):
                 txt_files.append(os.path.join(root, file))
     move_txt(txt_files)
-    push(toke)
+    #push(toke)
 
 
 
